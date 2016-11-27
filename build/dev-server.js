@@ -15,7 +15,7 @@ var port = process.env.PORT || config.dev.port
 var proxyTable = config.dev.proxyTable
 
 var app = express()
-//模拟后台接口
+//模拟后台接
 var appData = require('../data.json')
 var seller = appData.seller
 var goods = appData.goods
