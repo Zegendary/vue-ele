@@ -31,7 +31,6 @@
       this.$http.get('/api/seller').then((response) => {
         response = response.body
         if (response.errno === ERR_OK) {
-          console.log(response.data)
           this.seller = response.data
         }
       })
