@@ -9,17 +9,30 @@
           <div class="num" v-show="totalCount > 0">{{ totalCount }}</div>
         </div>
         <div class="price" :class="{  'highlight' : totalPrice > 0 }">￥{{ totalPrice }}</div>
-        <div class="desc">{{ payDesc }}</div>
+        <div class="desc">另需配送费￥{{ deliveryPrice }}元</div>
       </div>
       <div class="content-right">
         <div class="pay" :class="payClass">
-          ￥{{ minPrice }}起送
+          {{ payDesc }}
         </div>
       </div>
+    </div>
+    <div class="ball-container">
+      <transition-group name="drop"
+                        v-on:before-enter="beforeEnter"
+                        v-on:enter="enter"
+                        v-on:after-enter="afterEnter">
+        <div class="ball" v-for="ball in balls" :key="ball" v-show="ball.show">
+          <div class="inner inner-hook"></div>
+        </div>
+      </transition-group>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+  // 引入event bus
+  import Bus from '../../bus.js'
+
   export default{
     props: {
       deliveryPrice: {
@@ -33,13 +46,30 @@
       selectFoods: {
         type: Array,
         default() {
-          return [
-            {
-              price: 10,
-              count: 2
-            }
-          ]
+          return []
         }
+      }
+    },
+    data() {
+      return {
+        balls: [
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          },
+          {
+            show: false
+          }
+        ],
+        dropBall: []
       }
     },
     computed: {
@@ -72,6 +102,58 @@
           return 'not-enough'
         } else {
           return 'enough'
+        }
+      }
+    },
+    created() {
+      Bus.$on('cart.add',this.drop)
+    },
+    methods: {
+      drop(el) {
+        for (let i = 0; i < this.balls.length; i++) {
+          let ball = this.balls[i]
+          if (!ball.show) {
+            ball.show = true
+            ball.el = el
+            this.dropBall.push(ball)
+            return
+          }
+        }
+      },
+      beforeEnter(el) {
+        console.log(el)
+        let count = this.balls.length
+        while (count--) {
+          let ball = this.balls[count]
+          if (ball.show) {
+            let rect = ball.el.getBoundingClientRect()
+            let x = rect.left - 32
+            let y = -(window.innerHeight - rect.top - 22)
+            el.style.display = ''
+            el.style.webkitTransform = `translate3d(0,${y}px,0)`
+            el.style.transform = `translate3d(0,${y}px,0)`
+            let inner = el.getElementsByClassName('inner-hook')[0]
+            inner.style.webkitTransform = `translate3d(${x}px,0,0)`
+            inner.style.transform = `translate3d(${x}px,0,0)`
+          }
+        }
+      },
+      enter(el) {
+        /* eslint-disable no-unused-vars */
+        let rf = el.offsetHeight
+        this.$nextTick(() => {
+          el.style.webkitTransform = 'translate3d(0,0,0)'
+          el.style.transform = 'translate3d(0,0,0)'
+          let inner = el.getElementsByClassName('inner-hook')[0]
+          inner.style.webkitTransform = 'translate3d(0,0,0)'
+          inner.style.transform = 'translate3d(0,0,0)'
+        })
+      },
+      afterEnter(el) {
+        let ball = this.dropBall.shift()
+        if (ball) {
+          ball.show = false
+          el.style.display = 'none'
         }
       }
     }
@@ -164,4 +246,18 @@
           &.enough
             color #fff
             background #00b43c
+    .ball-container
+      .ball
+        position fixed
+        left 32px
+        bottom 22px
+        z-index 200
+        &.drop-enter-active, &.drop-leave-active
+          transition all 0.4
+          .inner
+            width 16px
+            height 16px
+            border-radius 50%
+            background rgb(0,160,220)
+            transition all 0.4
 </style>

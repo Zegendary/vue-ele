@@ -28,18 +28,22 @@
                   <span class="now">￥{{ food.price }}</span>
                   <span class="old-price" v-show="food.oldPrice">￥{{ food.oldPrice }}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food="food"></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price='seller.deliveryPrice' :min-price='seller.minPrice'></shopcart>
+    <shopcart :select-foods="selectFoods" :delivery-price='seller.deliveryPrice' :min-price='seller.minPrice'></shopcart>
   </div>
 </template>
 <script type="text/ecmascript-6">
   import BSroll from 'better-scroll'
   import shopcart from 'components/shopcart/shopcart'
+  import cartcontrol from 'components/cartcontrol/cartcontrol'
 
   const ERR_OK = 0
 
@@ -53,6 +57,7 @@
     },
     created() {
       this.classMap = ['decrease','discount','special','invoice','guarantee']
+      // 获取data.json中goods数据
       this.$http.get('/api/goods').then((response) => {
         response = response.body
         if (response.errno === ERR_OK) {
@@ -64,6 +69,7 @@
         }
       })
     },
+    // 计算左侧菜单栏index值
     computed: {
       currentIndex() {
         for (let i = 0; i < this.listHeight.length; i++) {
@@ -74,8 +80,20 @@
           }
         }
         return 0
+      },
+      selectFoods() {
+        let foods = []
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foods.push(food)
+            }
+          })
+        })
+        return foods
       }
     },
+    // 接受父组件传递的seller对象
     props: {
       seller: {
         type: Object
@@ -87,6 +105,7 @@
           click: true
         })
         this.foodsScroll = new BSroll(this.$refs.foodsWrapper,{
+          click: true,
           probeType: 3
         })
         this.foodsScroll.on('scroll',(pos) => {
@@ -114,7 +133,8 @@
       }
     },
     components: {
-      shopcart
+      shopcart,
+      cartcontrol
     }
   }
 </script>
@@ -221,4 +241,8 @@
               font-size 10px
               color rgb(147,153,159 )
 
+          .cartcontrol-wrapper
+            position absolute
+            right 0
+            bottom 12px
 </style>
