@@ -220,7 +220,7 @@
       height 100%
       overflow auto
       background rgba(7,17,27,.8)
-      backdrop-filter blur(10px)  //用来支持iphone的显示特性，然而我并没有发现什么卵用。。。
+      backdrop-filter blur(10px)  //用来支持iphone的显示特性，然而我并没有发现什么卵用
       &.fade-enter-active, &.fade-leave-active
         transition: opacity .5s
       &.fade-enter, &.fade-leave-active
@@ -240,7 +240,7 @@
             margin-top 16px
             text-align center
             padding 2px 0
-          .title
+          .title 
             display flex
             width 80%
             margin 28px auto 24px auto
