@@ -33,7 +33,7 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-
+          <ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
         </div>
       </div>
     </div>
@@ -45,6 +45,11 @@
   import cartcontrol from 'components/cartcontrol/cartcontrol'
   import split from 'components/split/split'
   import Bus from '../../bus.js'
+  import ratingselect from 'components/ratingselect/ratingselect'
+
+  // const POSITIVE = 0
+  // const NEGATIVE = 1
+  const ALL = 2
 
   export default{
     props: {
@@ -54,11 +59,20 @@
     },
     data() {
       return {
-        foodFlag: false
+        foodFlag: false,
+        selectType: ALL,
+        onlyContent: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       }
     },
     methods: {
       show() {
+        this.selectType = ALL
+        this.onlyContent = true
         this.foodFlag = true
         this.$nextTick(() => {
           if (!this.scroll) {
@@ -81,7 +95,12 @@
     },
     components: {
       cartcontrol,
-      split
+      split,
+      ratingselect
+    },
+    create() {
+      this.$on('ratingtype.select',this.selectType)
+      this.$on('content.toggle',this.onlyContent)
     }
   }
 </script>
@@ -173,6 +192,7 @@
     .info
       padding 18px
       .title
+        line-height 14px
         font-size 14px
         margin-bottom 6px
         color rgb(7,17,27)
@@ -182,4 +202,11 @@
         font-size 12px
         font-weight 200
         color rgb(77,85,93)
+    .rating
+      padding-top 18px
+      .title
+        line-height 14px
+        font-size 14px
+        margin-left 18px
+        color rgb(7,17,27)
 </style>
