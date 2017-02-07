@@ -42,7 +42,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import BSroll from 'better-scroll'
+  import BScroll from 'better-scroll'
   import shopcart from 'components/shopcart/shopcart'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
   import food from 'components/food/food'
@@ -104,10 +104,10 @@
     },
     methods: {
       _initScroll() {
-        this.menuScroll = new BSroll(this.$refs.menuWrapper,{
+        this.menuScroll = new BScroll(this.$refs.menuWrapper,{
           click: true
         })
-        this.foodsScroll = new BSroll(this.$refs.foodsWrapper,{
+        this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
           click: true,
           probeType: 3
         })

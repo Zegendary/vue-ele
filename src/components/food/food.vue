@@ -58,7 +58,7 @@
   </transition>
 </template>
 <script type="text/ecmascript-6">
-  import BSroll from 'better-scroll'
+  import BScroll from 'better-scroll'
   import Vue from 'vue'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
   import split from 'components/split/split'
@@ -91,14 +91,12 @@
     created() {
       this.$nextTick(() => {
         this.$refs.ratingselect.$on(':eventSelectType', type => {
-          console.log(type)
           this.selectType = type
           this.$nextTick(() => {
             this.scroll.refresh()
           })
         })
         this.$refs.ratingselect.$on(':eventToggle', text => {
-          console.log(text)
           this.onlyContent = text
           this.$nextTick(() => {
             this.scroll.refresh()
@@ -113,7 +111,7 @@
         this.foodFlag = true
         this.$nextTick(() => {
           if (!this.scroll) {
-            this.scroll = new BSroll(this.$refs.food,{
+            this.scroll = new BScroll(this.$refs.food,{
               click: true
             })
           } else {
