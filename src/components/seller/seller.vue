@@ -28,6 +28,10 @@
             </div>
           </li>
         </ul>
+        <div class="favorite" @click="toggleFavorite">
+          <span class="icon-favorite" :class="{'active':favorite}"></span>
+          <span class="text">{{favoriteText}}</span>
+        </div>
       </div>
       <split></split>
       <div class="bulletin">
@@ -67,11 +71,24 @@
   import BScroll from 'better-scroll'
   import star from 'components/star/star'
   import split from 'components/split/split'
+  import {saveToLocal,loadFormLocal} from '../../common/js/store'
 
   export default{
     props: {
       seller: {
         type: Object
+      }
+    },
+    data() {
+      return {
+        favorite: (() => {
+          return loadFormLocal(this.seller.id,'favorite',false)
+        })()
+      }
+    },
+    computed: {
+      favoriteText() {
+        return this.favorite ? '已收藏' : '收藏'
       }
     },
     components: {
@@ -94,6 +111,13 @@
       }
     },
     methods: {
+      toggleFavorite(event) {
+        if (!event._constructed) {
+          return
+        }
+        this.favorite = !this.favorite
+        saveToLocal(this.seller.id,'favorite',this.favorite)
+      },
       _initScroll() {
         if (!this.scroll) {
           this.scroll = new BScroll(this.$refs.seller, {
@@ -135,6 +159,7 @@
     overflow hidden
     width 100%
     .overview
+      position relative
       padding 18px
       .title
         margin-bottom 8px
@@ -177,6 +202,24 @@
             color rgb(7,27,27)
             .stress
               font-size 24px
+      .favorite
+        position absolute
+        width 50px
+        right 11px
+        top 18px
+        text-align center
+        .icon-favorite
+          display block
+          margin-bottom 4px
+          line-height 24px
+          color #d4d6d9
+          font-size 24px
+          &.active
+            color rgb(240,20,20)
+        .text
+          line-height 10px
+          color rgb(77,85,93)
+          font-size 10px
     .bulletin
       padding 18px 18px 0 18px
       .title
